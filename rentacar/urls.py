@@ -34,5 +34,16 @@ urlpatterns = [
 
     path('car/<int:pk>/',views.CarDetailView.as_view(),name="car-detail"),
 
+    path('car/<int:pk>/booking/',views.CarBookingConfirmView.as_view(),name="booking-confirm"),
+
+    path('booking/summary/',views.BookingSummaryView.as_view(),name="booking-summary"),
+
+    path('payment/verify/',views.PaymentVerificationView.as_view(),name="payment-verify"),
+
+    
+    
+
+    
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

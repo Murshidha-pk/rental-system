@@ -1,0 +1,347 @@
+{%extends 'base.html'%}
+
+{%block main_block%}
+
+
+<!-- Breadcrump start -->
+<div class="p-2">
+    <nav aria-label="Breadcrumb">
+        <ol class="flex items-center gap-1 text-sm text-gray-600">
+            <li>
+                <a href="{% url 'car-list' %}" class="block transition hover:text-gray-700">
+                    <span class="sr-only"> Home </span>
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                </a>
+            </li>
+
+            <li class="rtl:rotate-180">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m9 20.247 6-16.5" />
+                </svg>
+            </li>
+
+            <!-- <li>
+                <a href="" class="block transition hover:text-gray-700"> Cart </a>
+            </li> -->
+
+            <li class="rtl:rotate-180">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m9 20.247 6-16.5" />
+                </svg>
+            </li>
+
+            <li>
+                <a href="#" class="block transition hover:text-gray-700"> Cart Summary </a>
+            </li>
+        </ol>
+    </nav>
+</div>
+<!-- Breadcrump end -->
+
+{% if availability == "Available" %}
+<p style="color: green;">The car is available for the selected dates.</p>
+{% elif availability == "Not Available" %}
+<p style="color: red;">The car is not available for the selected dates.</p>
+{% endif %}
+
+<section class="bg-white py-8 antialiased light:bg-gray-900 md:py-16">
+
+
+
+
+    <form action="" method="post" class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+        {% csrf_token %}
+        <!-- {{form.as_p}} -->
+
+        <div class="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
+
+            <div class="min-w-0 flex-1 space-y-8">
+
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold text-gray-900 light:text-white">Booking Confirmation</h2>
+
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-1 border px-4 py-4 sm:px-6 shadow rounded">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2" for="name">
+                                Fullname
+                            </label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                name="fullname" type="text" placeholder="Enter your name">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2" for="date">
+                                From Date
+                            </label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                name="from_date" type="date" placeholder="Select a date">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2" for="date">
+                                To Date
+                            </label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                name="to_date" type="date" placeholder="Select a date">
+                        </div>
+                        <div class="mb-5">
+                            <label for="number" class="mb-3 block text-base font-medium text-[#07074D]">
+                                Phone
+                            </label>
+                            <input type="text" name="phone"  placeholder="Enter your phone number"
+                                class="w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md" />
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <div class="mt-1">
+                                <input name="email" type="email" autocomplete="email-address" required
+                                    class="px-2 py-3 mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-sky-500 focus:outline-none focus:ring-sky-500 sm:text-sm" />
+                            </div>
+                        </div>
+
+
+
+                        <div>
+                            <label for="address" class="mb-2 block text-sm font-medium text-gray-900 light:text-white">
+                                Address  </label>
+                            <textarea name="address" 
+                                class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 light:border-gray-600 light:bg-gray-700 light:text-white light:placeholder:text-gray-400 light:focus:border-primary-500 light:focus:ring-primary-500"
+                                placeholder="Enter Your Full Address"></textarea>
+                        </div>
+
+
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2" for="city">
+                                City
+                            </label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                name="city" type="text" placeholder="Enter your city">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2" for="location">
+                                Pickup location
+                            </label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                name="pickup_location" type="text" placeholder="Enter your pickup_location">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2" for="message">
+                                Special Request
+                            </label>
+                            <textarea
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                name="special_request"   rows="4"
+                                placeholder="Enter any additional information"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 font-bold mb-2" for="with_driver">
+                                With driver
+                            </label>
+                           
+                            <select
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                name="with_driver" >
+                                <option value="NO">NO</option>
+                                <option value="YES">YES</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- order summary start -->
+                <h2 class="text-xl font-semibold text-gray-900 light:text-white">Order Summary</h2>
+                <div class="space-y-3 border bg-white px-2 py-4 sm:px-6 shadow rounded">
+
+                    <div class="flex flex-col rounded-lg bg-white sm:flex-row">
+
+                        <img class="m-2 h-24 w-28 border object-cover object-center" src="{{car.picture.url}}" alt="" />
+
+
+                        <div class="flex w-full flex-col px-4 py-4">
+                            <span class="font-semibold">{{car.title}}</span>
+                            <span class="float-right text-dark-400">Price_per_day: {{car.price_per_day}}</span>
+                            <span class="float-right text-dark-400">Price per Week: ₹{{ car.price_per_week }}</span>
+                            <span class="float-right text-dark-400">Price per Month: ₹{{ car.price_per_month }}</span>
+
+
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+            <!-- order summary end -->
+            <div class="mt-6 w-full space-y-6 sm:mt-8 lg:mt-0 lg:max-w-xs xl:max-w-md">
+
+                <!-- payment method start -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-900 light:text-white">Payment</h3>
+
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div
+                            class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 light:border-gray-700 light:bg-gray-800">
+                            <div class="flex items-start">
+                                <div class="flex h-5 items-center">
+                                    <input id="credit-card" name="payment_method" aria-describedby="credit-card-text"
+                                        type="radio" value="COD"
+                                        class="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 light:border-gray-600 light:bg-gray-700 light:ring-offset-gray-800 light:focus:ring-primary-600"
+                                        checked />
+                                </div>
+
+                                <div class="ms-4 text-sm">
+                                    <label for="credit-card"
+                                        class="font-medium leading-none text-gray-900 light:text-white"> Cash on
+                                        delivery </label>
+                                    <p id="credit-card-text"
+                                        class="mt-1 text-xs font-normal text-gray-500 light:text-gray-400">Pay at the
+                                        time of delivery</p>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div
+                            class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 light:border-gray-700 light:bg-gray-800">
+                            <div class="flex items-start">
+                                <div class="flex h-5 items-center">
+                                    <input id="pay-on-delivery" name="payment_method"
+                                        aria-describedby="pay-on-delivery-text" type="radio" value="ONLINE"
+                                        class="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 light:border-gray-600 light:bg-gray-700 light:ring-offset-gray-800 light:focus:ring-primary-600" />
+                                </div>
+
+                                <div class="ms-4 text-sm">
+                                    <label for="pay-on-delivery"
+                                        class="font-medium leading-none text-gray-900 light:text-white"> Online payment
+                                    </label>
+                                    <p id="pay-on-delivery-text"
+                                        class="mt-1 text-xs font-normal text-gray-500 light:text-gray-400">+₹5 payment
+                                        processing fee</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <!-- payment method end -->
+
+                <div class="flow-root border rounded p-7">
+                    <div class="-my-3 divide-y divide-gray-200 light:divide-gray-800">
+                        <dl class="flex items-center justify-between gap-4 py-3">
+                            <dt class="text-base font-normal text-gray-500 light:text-gray-400">Subtotal</dt>
+
+                            
+
+                            {% if total_payment %}
+                            <h3>
+                                <dd class="text-base font-medium text-gray-900 light:text-white">₹{{total_payment}}</dd>
+                                <br>
+                                {% if total_payment == car.price_per_day %}
+                                    (Calculated based on daily rate)
+                                {% elif total_payment == car.price_per_week %}
+                                    (Calculated based on weekly rate)
+                                {% else %}
+                                    (Calculated based on monthly rate)
+                                {% endif %}
+                            </h3>
+                        {% endif %}
+
+
+                            
+
+
+                            
+
+
+                        </dl>
+
+                        <dl class="flex items-center justify-between gap-4 py-3">
+                            <dt class="text-base font-normal text-gray-500 light:text-gray-400">Savings</dt>
+                            <dd class="text-base font-medium text-green-500">0</dd>
+                        </dl>
+
+                        <dl class="flex items-center justify-between gap-4 py-3">
+                            <dt class="text-base font-normal text-gray-500 light:text-gray-400">Store Pickup</dt>
+                            <dd class="text-base font-medium text-gray-900 light:text-white">₹99</dd>
+                        </dl>
+
+                        <dl class="flex items-center justify-between gap-4 py-3">
+                            <dt class="text-base font-normal text-gray-500 light:text-gray-400">Tax</dt>
+                            <dd class="text-base font-medium text-gray-900 light:text-white">₹199</dd>
+                        </dl>
+
+                    </div>
+
+                    <div class="space-y-3 mt-4">
+                        <button type="submit"
+                            class="flex w-full items-center justify-center rounded-lg bg-gray-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 light:bg-gray-600 light:hover:bg-gray-700 light:focus:ring-gray-800">Proceed
+                            to Payment</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </form>
+    
+
+    <!-- Error Messages -->
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</section>
+
+
+
+<!-- <h1>Car Booking Confirmation</h1>
+    {% if availability == "Available" %}
+    <p style="color: green;">The car is available for the selected dates.</p>
+    {% elif availability == "Not Available" %}
+    <p style="color: red;">The car is not available for the selected dates.</p>
+    {% endif %} -->
+
+<!-- Booking Form -->
+<!-- <form method="post" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Book Now</button>
+    </form> -->
+
+<!-- Error Messages -->
+<!-- {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}     -->
+
+{%endblock%}

@@ -127,12 +127,14 @@ class Car(BaseModel):
 
     def __str__(self):
         return self.title
+    
+    
 
 class CarBooking(BaseModel):
 
-    product_object=models.ForeignKey(Car,on_delete=models.CASCADE,related_name="booking")
+    product_object = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="bookings",null=True)  
 
-    customer=models.ForeignKey(User,on_delete=models.CASCADE)
+    customer=models.ForeignKey(User,on_delete=models.CASCADE,related_name="booking")
 
     fullname=models.CharField(max_length=100)
 
@@ -152,6 +154,13 @@ class CarBooking(BaseModel):
 
     special_request=models.TextField()
 
+    DRIVER_OPTIONS=(
+        ("YES","YES"),
+        ("NO","NO")
+    )
+
+    with_driver=models.CharField(max_length=50,choices=DRIVER_OPTIONS,default="NO",null=True)
+
     PAYMENT_OPTIONS=(
         ("COD","COD"),
         ("ONLINE","ONLINE")
@@ -161,11 +170,48 @@ class CarBooking(BaseModel):
 
     rzp_order_id=models.CharField(max_length=100)
 
+    is_order_placed=models.BooleanField(default=False)
+
     is_paid=models.BooleanField(default=False)
+
+    total_payment = models.PositiveIntegerField(null=True, blank=True)
+
+   
+
+    
+    @staticmethod
+    def is_available(product_object,from_date,to_date):
+
+        overlapping_bookings=CarBooking.objects.filter(
+
+            product_object=product_object,
+
+            to_date__gte=from_date,
+
+            from_date__lte=to_date,
+        )
+
+        return not overlapping_bookings.exists()
+    
+    
+
+
+    
+
+    
+    
+    
 
 class BookingItem(BaseModel):
 
     booking_object=models.ForeignKey(CarBooking,on_delete=models.CASCADE,related_name="book_item")
 
+    order_object=models.ForeignKey(Car,on_delete=models.CASCADE)
 
-    total=models.FloatField()
+
+    price_per_day=models.PositiveIntegerField()
+
+
+
+
+
