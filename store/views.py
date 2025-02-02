@@ -6,11 +6,15 @@ from store.forms import SignUpForm,SignInForm,BookingConfirmForm
 
 from django.core.mail import send_mail
 
-from store.models import User,Car,CarBooking,BookingItem
+from store.models import User,Car,CarBooking,Brand,Category,BodyType
 
 from django.contrib import messages
 
 from django.contrib.auth import authenticate,login,logout
+
+from django.db.models import Q
+
+from django.core.paginator import Paginator
 
 from django.views.decorators.csrf import csrf_exempt
 
@@ -46,6 +50,57 @@ def send_otp_email(user):
 
     send_mail(subject,message,from_email,to_email)
 
+class LandingPageView(View):
+
+    template_name="home.html"
+    
+    def get(self,request,*args,**kwargs):
+
+        qs=Car.objects.all()
+
+        brands=Brand.objects.all()
+
+
+        
+        
+        return render(request,self.template_name,{"cars":qs,"brands":brands})
+    
+    def post(self,request,*args,**kwargs):
+
+        cars=Car.objects.all()
+        brands=Brand.objects.all()
+
+        
+        return render(request,self.template_name,{"cars":cars,"brands":brands})
+    
+
+class AboutUsView(View):
+
+    template_name="aboutus.html"
+
+    def get(self,request,*args,**kwargs):
+
+       
+
+        return render(request,self.template_name)
+    
+class ServicesView(View):
+
+    template_name="services.html"
+
+    def get(self,request,*args,**kwargs):
+
+        
+
+        return render(request,self.template_name)
+
+        
+
+
+
+        
+
+    
 
 class SignUpView(View):
 
@@ -149,7 +204,7 @@ class SignInView(View):
 
                 login(request,user_object)
 
-                return redirect("car-list")
+                return redirect("home")
             
 
         return render(request,self.template_name,{"form":form_instance})
@@ -161,9 +216,56 @@ class CarListView(View):
 
     def get(self,request,*args,**kwargs):
 
-        qs=Car.objects.all()
         
-        return render(request,self.template_name,{"data":qs})
+        search_text=request.GET.get("filter")
+
+        
+
+        qs=Car.objects.all()
+
+        paginator=Paginator(qs,4)
+
+        page_number=request.GET.get("page")
+
+        page_object=paginator.get_page(page_number)
+
+        if search_text:
+
+            qs=qs.filter(
+                Q(title_icontains=search_text) |
+
+                Q(category_objects_icontains=search_text) |
+
+                Q(brand_object_icontains=search_text) |
+
+                Q(body_icontains=search_text) |
+
+                Q(condition_icontains=search_text) |
+
+                Q(fuel_type_icontains=search_text) |
+
+                Q(color_icontains=search_text) 
+            )
+
+
+        
+        return render(request,self.template_name,{"page_obj":page_object,"search":search_text})
+    
+
+    """
+    current page number - ?page={{page_obj.number}}
+
+    next page number - ?page={{page_obj.next_page_number}}
+
+    previous page number - ?page={{page_obj.previous_page_number}}
+
+    last page number - ?page={{page_obj.paginator.num_pages}}
+
+    
+    """
+
+
+
 
 class CarDetailView(View):
 
@@ -182,6 +284,7 @@ class CarDetailView(View):
 #Booking view or booking confirm
 
 
+
 import razorpay
 
 class CarBookingConfirmView(View):
@@ -197,8 +300,10 @@ class CarBookingConfirmView(View):
         car=Car.objects.get(id=car_id)
 
         form_instance=self.form_class()
+       
+       
 
-        return render(request,self.template_name,{"form":form_instance,"car":car})
+        return render(request,self.template_name,{"form":form_instance,"car":car })
     
     def post(self,request,*args,**kwargs):
 
@@ -210,11 +315,22 @@ class CarBookingConfirmView(View):
 
         car=Car.objects.get(id=car_id)
 
-        # for availabilty for choosing date
+        
 
-        availability_status="Available"
 
-        total_payment = None
+        # check car is out of stock
+
+        if car.stock_car <= 0:
+
+            messages.error(request,"This car is out of stock")
+
+            return redirect("car-list")
+
+        
+
+       
+
+        
 
         if form_instance.is_valid():
 
@@ -226,37 +342,23 @@ class CarBookingConfirmView(View):
 
             print(payment_method)
 
-            duration = (to_date - from_date).days  # Calculate booking duration
+            # Calculate the booking duration
+            duration = (to_date - from_date).days
 
-           
-
-
-            # check car is available for the choosing dates
-
-            overlapping_bookings=CarBooking.objects.filter(
-
-                product_object=car,
-
-                to_date__gte=from_date,
-                
-                from_date__lte=to_date,
-            )
-
-            if overlapping_bookings.exists():
-
-                availability_status="Not Available"
-
-                messages.error(request,"The Selected dates are not availble")
-
+            # Calculate total payment based on duration
+            if duration <= 7:
+                total_payment = duration * car.price_per_day
+            elif duration <= 30:
+                total_payment = car.price_per_week
             else:
+                total_payment = car.price_per_month
 
-                 # Determine the total payment
-                if duration <= 7:
-                    total_payment = duration * car.price_per_day
-                elif duration <= 30:
-                    total_payment = car.price_per_week
-                else:
-                    total_payment = car.price_per_month
+            # Apply discount if available
+            discount_amount = (total_payment * car.disc_price) / 100 if car.disc_price else 0
+            final_price = total_payment - discount_amount
+
+            # Save the booking object (we can redirect later)
+            if "proceed_payment" in request.POST:
 
 
                 booking=form_instance.save(commit=False)
@@ -266,70 +368,95 @@ class CarBookingConfirmView(View):
                 booking.product_object=car
 
                 booking.is_order_placed=True
-
-                booking.total_payment = total_payment
-
-                
+                booking.total_payment = final_price
+                    # booking.total_payment = total_payment
 
                 booking.save()
-
-                
-
-
-                # create bookingitem
-
-                BookingItem.objects.create(
-
-                    booking_object=booking,
-
-                    order_object=car,
-
-                    price_per_day=car.price_per_day,
 
                     
 
 
-                )
+               
+            
+            
 
-                if payment_method=="ONLINE":
+            #show stock reduce
 
-                    client = razorpay.Client(auth=(RZP_KEY_ID,RZP_KEY_SECRET))
+            car.stock_car -= 1
 
-                    total_amount=(total_payment)*100
+            car.save()
 
+            if payment_method=="ONLINE":
 
-                    data = { "amount": total_amount, "currency": "INR", "receipt": "order_rcptid_11" }
+                client = razorpay.Client(auth=(RZP_KEY_ID,RZP_KEY_SECRET))
 
-                    payment = client.order.create(data=data)
+                # total_amount=(total_payment)*100
 
-                    rzp_order_id=payment.get("id")
+                total_amount = int(final_price * 100)  # Convert to paisa
+                data = { "amount": total_amount, "currency": "INR", "receipt": "order_rcptid_11" }
 
-                    booking.rzp_order_id=rzp_order_id            #from model
+                payment = client.order.create(data=data)
 
-                    booking.save()
+                rzp_order_id=payment.get("id")
 
-                    context={
+                booking.rzp_order_id=rzp_order_id            #from model
+
+                booking.save()
+
+                context={
                         "amount":total_amount,
 
-                         "currency":"INR",
+                        "currency":"INR",
 
                         "key_id":RZP_KEY_ID,
 
-                        "order_id":rzp_order_id
+                        "order_id":rzp_order_id,
 
-                       
                     }
+                
+                # return redirect("booking-summary")
+                
 
-                    return render(request,"payment.html",context)
-                
-                
+
+                return render(request,"payment.html",context)
+            
+            # messages.success(request, "Booking confirmed successfully!")
+            return redirect("booking-summary")
+        
+        messages.success(request, "Booking confirmed successfully!")
+        return render(request, "booking_summary.html", {
+                "booking": booking,
+                "total_payment": total_payment,
+                "discount_amount": discount_amount,
+                "final_price": final_price
+            })
+
+       
+
+        
+        
+
+            
+            
+        
+           
+
+       
+
+            
+
+            
+
+
+              
                 
                 # messages.success(request,"Booking confirmed Successfully!!")
 
-                # print(f"Total Payment: {total_payment}")
+            # print(f"Total Payment: {total_payment}")
                 
-        return redirect("booking-summary")
             
+           
+        
         
         
 
@@ -339,9 +466,9 @@ class BookingSummaryView(View):
 
     def get(self,request,*args,**kwargs):
 
-        qs=request.user.booking.all()
+        # qs=request.user.booking.all()
 
-        # qs=CarBooking.objects.filter(customer=request.user)
+        qs=CarBooking.objects.filter(customer=request.user)
 
         return render(request,self.template_name,{"bookings":qs})
 

@@ -2,26 +2,32 @@ from django.db import models
 
 from django.contrib.auth.models import AbstractUser
 
-from django.db.models.signals import post_save
 
 from random import randint
 
-from django.utils import timezone
+from django.utils.timezone import now
 
-from datetime import timedelta
+
 
 
 
 # Create your models here.
 
 class User(AbstractUser):
-
+     
     phone=models.CharField(max_length=10,unique=True)
+
+    email=models.EmailField(unique=True)
 
     is_verified=models.BooleanField(default=False)
 
     otp=models.CharField(max_length=6,null=True,blank=True)
 
+    
+
+
+
+    
     #genarate otp for user
 
     def genarate_otp(self):
@@ -30,23 +36,9 @@ class User(AbstractUser):
 
         self.save()
 
-class Profile(models.Model):
 
-    owner=models.OneToOneField(User,on_delete=models.CASCADE)
 
-    phone=models.CharField(max_length=15,unique=True)
 
-    bio=models.TextField()
-
-    profile_picture=models.ImageField(upload_to="profiles/",null=True,blank=True,default="profiles/default.png")
-
-def create_profile(sender,instance,created,**kwargs):
-
-    if created:
-
-        Profile.objects.create(owner=instance)
-
-post_save.connect(User,create_profile)
 
     
 class BaseModel(models.Model):
@@ -122,17 +114,45 @@ class Car(BaseModel):
 
     price_per_month=models.PositiveIntegerField()
 
+    stock_car=models.PositiveIntegerField(default=0)
+
+    disc_price=models.PositiveIntegerField(default=0)
+
 
     description=models.TextField()
 
     def __str__(self):
         return self.title
     
+class Coupon(BaseModel):
+
+    code=models.CharField(max_length=100,unique=True)
+
+    discount=models.FloatField()
+
+    valid_from=models.DateTimeField()
+
+    valid_to=models.DateTimeField()
+
+    max_usage=models.PositiveBigIntegerField(default=1)
+
+    active=models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.code
+    
+# check cuopon is valid    
+    def is_valid(self):
+
+        return self.active and self.valid_from <= now() <= self.valid_to
+
+
+
     
 
 class CarBooking(BaseModel):
 
-    product_object = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="bookings",null=True)  
+    product_object = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="bookings")  
 
     customer=models.ForeignKey(User,on_delete=models.CASCADE,related_name="booking")
 
@@ -159,7 +179,7 @@ class CarBooking(BaseModel):
         ("NO","NO")
     )
 
-    with_driver=models.CharField(max_length=50,choices=DRIVER_OPTIONS,default="NO",null=True)
+    with_driver=models.CharField(max_length=50,choices=DRIVER_OPTIONS,default="NO")
 
     PAYMENT_OPTIONS=(
         ("COD","COD"),
@@ -174,27 +194,16 @@ class CarBooking(BaseModel):
 
     is_paid=models.BooleanField(default=False)
 
-    total_payment = models.PositiveIntegerField(null=True, blank=True)
+    total_payment = models.FloatField()
+
+    coupon_obj=models.ForeignKey(Coupon,on_delete=models.SET_NULL,null=True,blank=True)
+
+    final_price=models.FloatField(null=True,blank=True)
 
    
 
     
-    @staticmethod
-    def is_available(product_object,from_date,to_date):
-
-        overlapping_bookings=CarBooking.objects.filter(
-
-            product_object=product_object,
-
-            to_date__gte=from_date,
-
-            from_date__lte=to_date,
-        )
-
-        return not overlapping_bookings.exists()
-    
-    
-
+  
 
     
 
@@ -202,16 +211,9 @@ class CarBooking(BaseModel):
     
     
 
-class BookingItem(BaseModel):
-
-    booking_object=models.ForeignKey(CarBooking,on_delete=models.CASCADE,related_name="book_item")
-
-    order_object=models.ForeignKey(Car,on_delete=models.CASCADE)
 
 
-    price_per_day=models.PositiveIntegerField()
-
-
+    
 
 
 

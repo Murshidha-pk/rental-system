@@ -125,6 +125,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL="store.User"
 
+AUTHENTICATION_BACKENDS=[
+
+    "django.contrib.auth.backends.ModelBackend",
+
+    "store.authentication.EmailBackend",
+
+    "store.authentication.PhoneBackend",
+]
+
 EMAIL_HOST = 'smtp.gmail.com'
 
 EMAIL_USE_TLS = True

@@ -1,0 +1,242 @@
+{%extends 'base.html'%}
+
+{%block main_block%}
+
+
+<!-- hero seciton -->
+<div class="relative w-full h-[380px]" id="home">
+    <div class="absolute inset-0 opacity-60">
+        <img src="https://images.pexels.com/photos/3770875/pexels-photo-3770875.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+            alt="Background Image" class="object-cover object-center w-full h-full" />
+
+    </div>
+    <div class="absolute inset-9 flex flex-col md:flex-row items-center justify-between">
+        <div class="md:w-1/2 mb-4 md:mb-0">
+            <h1 class="text-grey-700 font-medium text-4xl md:text-5xl leading-tight mb-2">CAR RENTAL</h1>
+            <p class="font-medium text-3xl mb-8 mt-4">Need a car? Let us find a perfect car for you!</p>
+            <a href="{%url 'car-list'%}"
+                class="px-6 py-3 bg-blue-900 text-white font-medium rounded-full hover:bg-blue-100  transition duration-200">Find Your Car</a>
+        </div>
+    </div>
+</div>
+
+<!-- our services section -->
+<section class="py-10" id="services">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Our Cars</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+
+                <a href="{%url 'car-list'%}">
+                    <img src="https://images.pexels.com/photos/28569551/pexels-photo-28569551/free-photo-of-sleek-gray-lamborghini-at-sunset-in-brisbane.jpeg?auto=compress&cs=tinysrgb&w=600"
+                        alt="wheat flour grinding" class="w-full h-64 object-cover">
+    
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-medium text-gray-800 mb-2">Lamborghini EVO Spyder (Black) , 2023</h3>
+                        
+                    </div>
+    
+                </a>
+
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+<a href="{%url 'car-list'%}">
+    
+                    <img src="https://images.pexels.com/photos/3764984/pexels-photo-3764984.jpeg?auto=compress&cs=tinysrgb&w=600"
+                        alt="wheat flour grinding" class="w-full h-64 object-cover">
+    
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-medium text-gray-800 mb-2">Rolls Royce Cullinan White, 2019</h3>
+                       
+                    </div>
+</a>
+
+
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+
+               <a href="{%url 'car-list'%}">
+                    <img src="https://images.pexels.com/photos/2365572/pexels-photo-2365572.jpeg?auto=compress&cs=tinysrgb&w=600"
+                        alt="wheat flour grinding" class="w-full h-64 object-cover">
+    
+                    <div class="p-6 text-center">
+                        <h3 class="text-xl font-medium text-gray-800 mb-2">Mercedes CLA200 (Yellow), 2020</h3>
+                        
+                    </div>
+               </a>
+
+
+            </div>
+
+
+        </div>
+</section>
+
+
+
+<!-- why us  -->
+<section class="text-gray-700 body-font mt-10">
+    <div class="flex justify-center text-3xl font-bold text-gray-800 text-center">
+        Why Us?
+    </div>
+    <div class="container px-5 py-12 mx-auto">
+        <div class="flex flex-wrap text-center justify-center ">
+            <div class="border rounded-sm shadow-xl p-4 md:w-1/4 sm:w-1/2">
+                <div class="px-4 py-6 transform transition duration-500 hover:scale-110">
+                    
+                    <h2 class="title-font font-regular text-2xl text-gray-900">Top Quality Service </h2>
+                    <p class="text-justify">Only the best cars make it to our listings. Renty guarantees quality and top ratings of its services, so you get a reliable, satisfying experience every time. </p>
+                </div>
+            </div>
+
+            <div class="border rounded-sm shadow-xl p-4 md:w-1/4 sm:w-1/2">
+                <div class="px-4 py-6 transform transition duration-500 hover:scale-110">
+                    
+                    <h2 class="title-font font-regular text-2xl text-gray-900">24/7 Rental</h2>
+                    <p class="text-justify"> Rent a car at your convenience, whether in the daytime or at night. We function around the clock and give prompt feedback. </p>
+                </div>
+            </div>
+
+            <div class="border shadow-xl p-4 md:w-1/4 sm:w-1/2">
+                <div class="px-4 py-6 transform transition duration-500 hover:scale-110">
+                    
+                    <h2 class="title-font font-regular text-2xl text-gray-900">Simplified Payment Gateway</h2>
+                    <p class="text-justify">We are currently developing a payment gateway specifically designed for car rental companies. 
+                        By implementing it into the rental process, we will simplify the overall booking process. </p>
+                </div>
+            </div>
+
+            <div class="border shadow-xl p-4 md:w-1/4 sm:w-1/2">
+                <div class="px-4 py-6 transform transition duration-500 hover:scale-110">
+                    
+                    <h2 class="title-font font-regular text-2xl text-gray-900">Best Price Guarantee</h2>
+                    <p class="text-justify"> We aim at customer satisfaction, that’s why we suggest an additional discount if you happen to find a cheaper option. Our customer support is pleased to help. </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- gallery -->
+<!-- <section class="text-gray-700 body-font" id="gallery">
+    <div class="flex justify-center text-3xl font-bold text-gray-800 text-center py-10">
+        Gallery
+    </div>
+
+    <div class="grid grid-cols-1 place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+
+        <div class="group relative">
+            <img src="https://iconscout.com/free-icon/bmw-4"
+                alt="Image 1"
+                class="aspect-[2/3] h-80 object-cover rounded-lg transition-transform transform scale-100 group-hover:scale-105" />
+        </div>
+
+        <div class="group relative">
+            <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw1fHxuYXR1cmV8ZW58MHwwfHx8MTY5NDA5OTcyOXww&ixlib=rb-4.0.3&q=80&w=1080"
+                alt="Image 1"
+                class="aspect-[2/3] h-80 object-cover rounded-lg transition-transform transform scale-100 group-hover:scale-105" />
+        </div>
+
+        <div class="group relative">
+            <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw1fHxuYXR1cmV8ZW58MHwwfHx8MTY5NDA5OTcyOXww&ixlib=rb-4.0.3&q=80&w=1080"
+                alt="Image 1"
+                class="aspect-[2/3] h-80 object-cover rounded-lg transition-transform transform scale-100 group-hover:scale-105" />
+        </div>
+        <div class="group relative">
+            <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw1fHxuYXR1cmV8ZW58MHwwfHx8MTY5NDA5OTcyOXww&ixlib=rb-4.0.3&q=80&w=1080"
+                alt="Image 1"
+                class="aspect-[2/3] h-80 object-cover rounded-lg transition-transform transform scale-100 group-hover:scale-105" />
+        </div>
+
+
+
+        
+    </div>
+
+</section> -->
+
+<!-- Visit us section -->
+<section class="bg-gray-100">
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:py-20 lg:px-8">
+        <div class="max-w-2xl lg:max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl font-extrabold text-gray-900" id="contactUs">Visit Our Location</h2>
+            <p class="mt-3 text-lg text-gray-500">Let us serve you the best</p>
+        </div>
+        <div class="mt-8 lg:mt-20">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <div class="max-w-full mx-auto rounded-lg overflow-hidden">
+                        <div class="border-t border-gray-200 px-6 py-4">
+                            <h3 class="text-lg font-bold text-gray-900">Contact</h3>
+                            <p class="mt-1 font-bold text-gray-600"><a href="tel:+123">Phone: +971
+                                    123456789</a></p>
+                            <a class="flex m-1" href="tel:+9719823331842">
+                                <div class="flex-shrink-0">
+                                    <div
+                                        class="flex items-center justify-between h-10 w-30 rounded-md bg-indigo-500 text-white p-2">
+                                        <!-- Heroicon name: phone -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                                        </svg>
+                                        Call now
+                                    </div>
+                                </div>
+
+                            </a>
+                        </div>
+                        <div class="px-6 py-4">
+                            <h3 class="text-lg font-medium text-gray-900">Our Address</h3>
+                            <p class="mt-1 text-gray-600">Muwaliha,Sharjah,Dubai,UAE</p>
+                        </div>
+                        <div class="border-t border-gray-200 px-6 py-4">
+                            <h3 class="text-lg font-medium text-gray-900">Hours</h3>
+                            <p class="mt-1 text-gray-600">Monday - Sunday : 9am - 6pm</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="rounded-lg overflow-hidden order-none sm:order-first">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3785.7850672491236!2d76.58802159999999!3d18.402630699999996!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcf83ca88e84341%3A0x841e547bf3ad066d!2zQmFwcGEgZmxvdXIgbWlsbCB8IOCkrOCkquCljeCkquCkviDgpKrgpYDgpKAg4KSX4KS_4KSw4KSj4KWALCDgpK7gpL_gpLDgpJrgpYAg4KSV4KS-4KSC4KSh4KSqIOCkhuCko-CkvyDgpLbgpYfgpLXgpL7gpK_gpL4!5e0!3m2!1sen!2sin!4v1713433597892!5m2!1sen!2sin"
+                        class="w-full" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- footer -->
+<section>
+    <footer class="bg-gray-200 text-black py-4 px-3">
+        <div class="container mx-auto flex flex-wrap items-center justify-between">
+            <div class="w-full md:w-1/2 md:text-center md:mb-4 mb-8">
+                <p class="text-xs text-black-400 md:text-sm">Copyright 2024 &copy; All Rights Reserved</p>
+            </div>
+            <div class="w-full md:w-1/2 md:text-center md:mb-0 mb-8">
+                <ul class="list-reset flex justify-center flex-wrap text-xs md:text-sm gap-3">
+                    <li><a href="#contactUs" class="text-black-400 hover:text-white">Contact</a></li>
+                    <li class="mx-4"><a href="/privacy" class="text-black-400 hover:text-white">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+</section>
+
+<script>
+    document.getElementById("hamburger").onclick = function toggleMenu() {
+        const navToggle = document.getElementsByClassName("toggle");
+        for (let i = 0; i < navToggle.length; i++) {
+            navToggle.item(i).classList.toggle("hidden");
+        }
+    };
+</script>
+
+{%endblock%}

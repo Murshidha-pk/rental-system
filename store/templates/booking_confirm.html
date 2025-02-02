@@ -45,11 +45,7 @@
 </div>
 <!-- Breadcrump end -->
 
-{% if availability == "Available" %}
-<p style="color: green;">The car is available for the selected dates.</p>
-{% elif availability == "Not Available" %}
-<p style="color: red;">The car is not available for the selected dates.</p>
-{% endif %}
+
 
 <section class="bg-white py-8 antialiased light:bg-gray-900 md:py-16">
 
@@ -154,6 +150,7 @@
                             <select
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 name="with_driver" >
+                                <option value="Select Your Choice">Select Your Choice</option>
                                 <option value="NO">NO</option>
                                 <option value="YES">YES</option>
                             </select>
@@ -180,6 +177,7 @@
 
 
                         </div>
+                        
                     </div>
 
 
@@ -251,24 +249,13 @@
 
                 <div class="flow-root border rounded p-7">
                     <div class="-my-3 divide-y divide-gray-200 light:divide-gray-800">
-                        <dl class="flex items-center justify-between gap-4 py-3">
-                            <dt class="text-base font-normal text-gray-500 light:text-gray-400">Subtotal</dt>
+                        <!-- <dl class="flex items-center justify-between gap-4 py-3">
+                            <dt class="text-base font-normal text-gray-500 light:text-gray-400">From Date</dt>
+                            <dd class="text-base font-medium text-green-500">{{from_date}}</dd>
 
                             
 
-                            {% if total_payment %}
-                            <h3>
-                                <dd class="text-base font-medium text-gray-900 light:text-white">₹{{total_payment}}</dd>
-                                <br>
-                                {% if total_payment == car.price_per_day %}
-                                    (Calculated based on daily rate)
-                                {% elif total_payment == car.price_per_week %}
-                                    (Calculated based on weekly rate)
-                                {% else %}
-                                    (Calculated based on monthly rate)
-                                {% endif %}
-                            </h3>
-                        {% endif %}
+                            
 
 
                             
@@ -280,27 +267,32 @@
                         </dl>
 
                         <dl class="flex items-center justify-between gap-4 py-3">
-                            <dt class="text-base font-normal text-gray-500 light:text-gray-400">Savings</dt>
-                            <dd class="text-base font-medium text-green-500">0</dd>
+                            <dt class="text-base font-normal text-gray-500 light:text-gray-400">To Date</dt>
+                            <dd class="text-base font-medium text-green-500">{{to_date}}</dd>
                         </dl>
 
                         <dl class="flex items-center justify-between gap-4 py-3">
-                            <dt class="text-base font-normal text-gray-500 light:text-gray-400">Store Pickup</dt>
-                            <dd class="text-base font-medium text-gray-900 light:text-white">₹99</dd>
-                        </dl>
+                            <dt class="text-base font-normal text-gray-500 light:text-gray-400"> Pickup</dt>
+                            <dd class="text-base font-medium text-gray-900 light:text-white">{{pickup_location}}</dd>
+                        </dl> -->
 
-                        <dl class="flex items-center justify-between gap-4 py-3">
-                            <dt class="text-base font-normal text-gray-500 light:text-gray-400">Tax</dt>
-                            <dd class="text-base font-medium text-gray-900 light:text-white">₹199</dd>
-                        </dl>
-
+                        
                     </div>
+                    <div>
+                        <p>Total Payment: ₹{{ total_payment }}</p>
+                        <p>Discount: ₹{{ discount_amount }}</p>
+                        <p>Final Price: ₹{{ final_price }}</p>
+                    </div>
+                
+                    <!-- Button to proceed to payment -->
+                    <button type="submit" name="proceed_payment">Proceed to Payment</button>
+                    
 
-                    <div class="space-y-3 mt-4">
+                    <!-- <div class="space-y-3 mt-4">
                         <button type="submit"
                             class="flex w-full items-center justify-center rounded-lg bg-gray-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 light:bg-gray-600 light:hover:bg-gray-700 light:focus:ring-gray-800">Proceed
                             to Payment</button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
@@ -308,40 +300,9 @@
 
     </form>
     
-
-    <!-- Error Messages -->
-    {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+   
 </section>
 
 
-
-<!-- <h1>Car Booking Confirmation</h1>
-    {% if availability == "Available" %}
-    <p style="color: green;">The car is available for the selected dates.</p>
-    {% elif availability == "Not Available" %}
-    <p style="color: red;">The car is not available for the selected dates.</p>
-    {% endif %} -->
-
-<!-- Booking Form -->
-<!-- <form method="post" action="">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Book Now</button>
-    </form> -->
-
-<!-- Error Messages -->
-<!-- {% if messages %}
-    <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}     -->
 
 {%endblock%}

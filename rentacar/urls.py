@@ -24,7 +24,15 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-     path('register/',views.SignUpView.as_view(),name="signup"),
+    path('',views.LandingPageView.as_view(),name="home"),
+
+    path('aboutus/',views.AboutUsView.as_view(),name="aboutus"),
+
+    path('sevices/',views.ServicesView.as_view(),name="services"),
+
+
+
+    path('register/',views.SignUpView.as_view(),name="signup"),
 
     path('verify/otp/',views.VerifyEmailView.as_view(),name="verify-email"),
 
@@ -40,7 +48,7 @@ urlpatterns = [
 
     path('payment/verify/',views.PaymentVerificationView.as_view(),name="payment-verify"),
 
-    
+
     
 
     
