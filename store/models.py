@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 
 from random import randint
 
-from django.utils.timezone import now
+from django.utils import timezone
 
 
 
@@ -116,7 +116,6 @@ class Car(BaseModel):
 
     stock_car=models.PositiveIntegerField(default=0)
 
-    disc_price=models.PositiveIntegerField(default=0)
 
 
     description=models.TextField()
@@ -124,35 +123,41 @@ class Car(BaseModel):
     def __str__(self):
         return self.title
     
-class Coupon(BaseModel):
+    
+    
+class Discount(models.Model):
 
-    code=models.CharField(max_length=100,unique=True)
+    car=models.ForeignKey(Car,on_delete=models.CASCADE,related_name="discounts")
 
-    discount=models.FloatField()
+    DISCOUNT_TYPE=[
+        ("percentage","Percentage"),
+        ("flat amount","flat Amount")
+    ]
+
+    discount_type=models.CharField(choices=DISCOUNT_TYPE,max_length=20)
+
+    value=models.FloatField()
+
+
 
     valid_from=models.DateTimeField()
 
     valid_to=models.DateTimeField()
 
-    max_usage=models.PositiveBigIntegerField(default=1)
-
     active=models.BooleanField(default=True)
 
-    def __str__(self):
-        return self.code
-    
-# check cuopon is valid    
     def is_valid(self):
 
-        return self.active and self.valid_from <= now() <= self.valid_to
+        return self.active and self.valid_from <= timezone.now() <= self.valid_to
 
+    
 
 
     
 
 class CarBooking(BaseModel):
 
-    product_object = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="bookings")  
+    product_object = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="bookings",null=True)  
 
     customer=models.ForeignKey(User,on_delete=models.CASCADE,related_name="booking")
 
@@ -194,13 +199,17 @@ class CarBooking(BaseModel):
 
     is_paid=models.BooleanField(default=False)
 
-    total_payment = models.FloatField()
+    total_payment = models.DecimalField(max_digits=10,decimal_places=2,null=True,blank=True,default=0)
 
-    coupon_obj=models.ForeignKey(Coupon,on_delete=models.SET_NULL,null=True,blank=True)
+    discount_amount = models.FloatField(null=True,default=0)
 
-    final_price=models.FloatField(null=True,blank=True)
+    final_price=models.DecimalField(max_digits=10,decimal_places=2,null=True,blank=True,default=0)
 
-   
+
+
+    
+
+
 
     
   

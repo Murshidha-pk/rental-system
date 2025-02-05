@@ -33,7 +33,7 @@ class BookingConfirmForm(forms.ModelForm):
 
         model=CarBooking
 
-        fields=['fullname', 'from_date','to_date','phone','email','address','city','pickup_location','special_request','with_driver','payment_method','coupon_obj']
+        fields=['fullname', 'from_date','to_date','phone','email','address','city','pickup_location','special_request','with_driver','payment_method']
 
         widgets={
 
@@ -46,12 +46,22 @@ class BookingConfirmForm(forms.ModelForm):
             "with_driver":forms.Select(attrs={"class":"form-control form-select"})
         }
 
+    
+
     def clean(self):
-        cleaned_data = super().clean()
-        car = self.instance.product_object
+
+        cleaned_data=super().clean()
+
+        car=self.instance.product_object
+
         if car and car.stock_car <= 0:
+
             raise forms.ValidationError("This car is out of stock!")
+        
         return cleaned_data
+
+
+
 
    
    

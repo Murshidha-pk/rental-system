@@ -4,11 +4,11 @@
 
 
 <!-- Breadcrump start -->
-<div class="p-2">
+<div class="p-2 ">
     <nav aria-label="Breadcrumb">
         <ol class="flex items-center gap-1 text-sm text-gray-600">
             <li>
-                <a href="{% url 'car-list' %}" class="block transition hover:text-gray-700">
+                <a href="{% url 'home' %}" class="block transition hover:text-gray-700">
                     <span class="sr-only"> Home </span>
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24"
@@ -19,16 +19,7 @@
                 </a>
             </li>
 
-            <li class="rtl:rotate-180">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m9 20.247 6-16.5" />
-                </svg>
-            </li>
-
-            <!-- <li>
-                <a href="" class="block transition hover:text-gray-700"> Cart </a>
-            </li> -->
+           
 
             <li class="rtl:rotate-180">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -38,7 +29,7 @@
             </li>
 
             <li>
-                <a href="#" class="block transition hover:text-gray-700"> Cart Summary </a>
+                <a href="{% url 'car-list'%}" class="block transition hover:text-gray-700"> car list </a>
             </li>
         </ol>
     </nav>
@@ -47,7 +38,7 @@
 
 
 
-<section class="bg-white py-8 antialiased light:bg-gray-900 md:py-16">
+<section class="bg-slate-100 py-8 antialiased light:bg-gray-900 md:py-16">
 
 
 
@@ -59,6 +50,31 @@
         <div class="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
 
             <div class="min-w-0 flex-1 space-y-8">
+                  <!-- order summary start -->
+                  <h2 class="text-xl font-semibold text-gray-900 light:text-white">Order Summary</h2>
+                  <div class="space-y-3 border bg-white px-2 py-4 sm:px-6 shadow rounded">
+  
+                      <div class="flex flex-col rounded-lg bg-white sm:flex-row">
+  
+                          <img class="m-2 h-24 w-28 border object-cover object-center" src="{{car.picture.url}}" alt="" />
+  
+  
+                          <div class="flex w-full flex-col px-4 py-4">
+                              <span class="font-semibold">{{car.title}}</span>
+                              <span class="float-right text-dark-400">Price_per_day: {{car.price_per_day}}</span>
+                              <span class="float-right text-dark-400">Price per Week: ₹{{ car.price_per_week }}</span>
+                              <span class="float-right text-dark-400">Price per Month: ₹{{ car.price_per_month }}</span>
+  
+  
+  
+                          </div>
+                          
+                      </div>
+  
+  
+  
+                  </div>
+  
 
                 <div class="space-y-4">
                     <h2 class="text-xl font-semibold text-gray-900 light:text-white">Booking Confirmation</h2>
@@ -134,13 +150,13 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="block text-gray-700 font-bold mb-2" for="message">
+                            <label class="block text-gray-700 font-bold mb-2" for="message" >
                                 Special Request
                             </label>
                             <textarea
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 name="special_request"   rows="4"
-                                placeholder="Enter any additional information"></textarea>
+                                placeholder="Eg:My Flight Number is XXXX,and i Will arrive at Terminal 1 Dubai.."></textarea>
                         </div>
                         <div class="mb-4">
                             <label class="block text-gray-700 font-bold mb-2" for="with_driver">
@@ -159,31 +175,7 @@
 
                 </div>
 
-                <!-- order summary start -->
-                <h2 class="text-xl font-semibold text-gray-900 light:text-white">Order Summary</h2>
-                <div class="space-y-3 border bg-white px-2 py-4 sm:px-6 shadow rounded">
-
-                    <div class="flex flex-col rounded-lg bg-white sm:flex-row">
-
-                        <img class="m-2 h-24 w-28 border object-cover object-center" src="{{car.picture.url}}" alt="" />
-
-
-                        <div class="flex w-full flex-col px-4 py-4">
-                            <span class="font-semibold">{{car.title}}</span>
-                            <span class="float-right text-dark-400">Price_per_day: {{car.price_per_day}}</span>
-                            <span class="float-right text-dark-400">Price per Week: ₹{{ car.price_per_week }}</span>
-                            <span class="float-right text-dark-400">Price per Month: ₹{{ car.price_per_month }}</span>
-
-
-
-                        </div>
-                        
-                    </div>
-
-
-
-                </div>
-
+              
 
             </div>
 
@@ -193,6 +185,7 @@
 
             <!-- order summary end -->
             <div class="mt-6 w-full space-y-6 sm:mt-8 lg:mt-0 lg:max-w-xs xl:max-w-md">
+
 
                 <!-- payment method start -->
                 <div class="space-y-4">
@@ -249,50 +242,39 @@
 
                 <div class="flow-root border rounded p-7">
                     <div class="-my-3 divide-y divide-gray-200 light:divide-gray-800">
+                       
+
                         <!-- <dl class="flex items-center justify-between gap-4 py-3">
-                            <dt class="text-base font-normal text-gray-500 light:text-gray-400">From Date</dt>
-                            <dd class="text-base font-medium text-green-500">{{from_date}}</dd>
-
-                            
-
-                            
-
-
-                            
-
-
-                            
-
-
-                        </dl>
-
-                        <dl class="flex items-center justify-between gap-4 py-3">
                             <dt class="text-base font-normal text-gray-500 light:text-gray-400">To Date</dt>
                             <dd class="text-base font-medium text-green-500">{{to_date}}</dd>
-                        </dl>
-
-                        <dl class="flex items-center justify-between gap-4 py-3">
-                            <dt class="text-base font-normal text-gray-500 light:text-gray-400"> Pickup</dt>
-                            <dd class="text-base font-medium text-gray-900 light:text-white">{{pickup_location}}</dd>
                         </dl> -->
 
+                        <dl class="flex items-center justify-between gap-4 py-3">
+                            {%if discount%}
+                            <dt class="text-base font-normal text-dark-500 light:text-gray-400">Discount Price </dt>
+                            {%if discount.discount_type == "percentage"%}
+                            <dd class="text-base font-medium text-red-500 light:text-white"> {{ discount.value }}% Off</dd>
+                            {%else%}
+                            <dd class="text-base font-medium text-red-500 light:text-white"> {{ discount.value }} AED Off</dd>
+                            {%endif%}
+
+                            {%endif%}
+                        </dl>
+
                         
-                    </div>
-                    <div>
-                        <p>Total Payment: ₹{{ total_payment }}</p>
-                        <p>Discount: ₹{{ discount_amount }}</p>
-                        <p>Final Price: ₹{{ final_price }}</p>
-                    </div>
+
+
+
                 
-                    <!-- Button to proceed to payment -->
-                    <button type="submit" name="proceed_payment">Proceed to Payment</button>
+                   
+                    
                     
 
-                    <!-- <div class="space-y-3 mt-4">
+                    <div class="space-y-3 mt-4">
                         <button type="submit"
                             class="flex w-full items-center justify-center rounded-lg bg-gray-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-4 focus:ring-gray-300 light:bg-gray-600 light:hover:bg-gray-700 light:focus:ring-gray-800">Proceed
                             to Payment</button>
-                    </div> -->
+                    </div>
                 </div>
             </div>
 

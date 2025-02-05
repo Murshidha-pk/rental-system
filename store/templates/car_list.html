@@ -9,7 +9,7 @@
 
 {%for car in page_obj%}
 
-<div class="bg-slate-50  py-8 ">
+<div class="bg-slate-100  py-8 ">
     <div class="max-w-4xl my-6  mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex border-none shadow-2xl flex-col md:flex-row -mx-4">
             <div class="md:flex-1 px-4">
@@ -39,6 +39,34 @@
             
             <div class="md:flex-1 px-4">
                 <h2 class="text-2xl font-bold text-black mb-2">{{car.title}}</h2>
+
+                {%if car.active_discount%}
+
+                <span  class="text-black text-xl font-semibold text-sm mb-4">Offer:
+
+                   <span class="text-red-500 text-xl font-semibold text-sm mb-4">
+                        {%if car.active_discount.discount_type == "percentage" %}
+    
+                          
+                            {{car.active_discount.value}} % Off
+        
+                            {%else%}
+        
+                            {{car.active_discount.value}} AED off
+        
+                            {%endif%}
+                   </span>
+                   
+
+                    
+                {%endif%}
+
+               
+
+    
+
+          
+           
 
 
                 
@@ -153,5 +181,20 @@
 
 {%endif%}
 
-
+<!-- footer -->
+<section>
+    <footer class="bg-gray-200 text-black py-4 px-3">
+        <div class="container mx-auto flex flex-wrap items-center justify-between">
+            <div class="w-full md:w-1/2 md:text-center md:mb-4 mb-8">
+                <p class="text-xs text-black-400 md:text-sm">Copyright 2024 &copy; All Rights Reserved</p>
+            </div>
+            <div class="w-full md:w-1/2 md:text-center md:mb-0 mb-8">
+                <ul class="list-reset flex justify-center flex-wrap text-xs md:text-sm gap-3">
+                    <li><a href="#contactUs" class="text-black-400 hover:text-white">Contact</a></li>
+                    <li class="mx-4"><a href="/privacy" class="text-black-400 hover:text-white">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+</section>
 {%endblock%}

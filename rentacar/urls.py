@@ -45,8 +45,14 @@ urlpatterns = [
     path('car/<int:pk>/booking/',views.CarBookingConfirmView.as_view(),name="booking-confirm"),
 
     path('booking/summary/',views.BookingSummaryView.as_view(),name="booking-summary"),
+    
 
     path('payment/verify/',views.PaymentVerificationView.as_view(),name="payment-verify"),
+
+    path('car/<int:pk>/remove/',views.CarDeleteView.as_view(),name="car-delete"),
+
+    path('signout/',views.SignOutView.as_view(),name="signout"),
+
 
 
     

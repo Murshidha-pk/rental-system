@@ -6,7 +6,7 @@ from store.forms import SignUpForm,SignInForm,BookingConfirmForm
 
 from django.core.mail import send_mail
 
-from store.models import User,Car,CarBooking,Brand,Category,BodyType
+from store.models import User,Car,CarBooking,Brand,Category,BodyType,Discount
 
 from django.contrib import messages
 
@@ -20,6 +20,13 @@ from django.views.decorators.csrf import csrf_exempt
 
 from django.utils.decorators import method_decorator
 
+from store.decorators import signin_required
+
+from django.views.decorators.cache import never_cache
+
+
+from django.utils import timezone
+
 from decouple import config
 
 
@@ -28,6 +35,7 @@ RZP_KEY_ID=config('RZP_KEY_ID')
 
 RZP_KEY_SECRET=config('RZP_KEY_SECRET')
 
+decs=[signin_required,never_cache]
 
 
 
@@ -209,7 +217,7 @@ class SignInView(View):
 
         return render(request,self.template_name,{"form":form_instance})
 
-
+@method_decorator(decs,name="dispatch")
 class CarListView(View):
 
     template_name="car_list.html"
@@ -221,7 +229,11 @@ class CarListView(View):
 
         
 
-        qs=Car.objects.all()
+        qs=Car.objects.all().prefetch_related("discounts")
+
+        for car in qs:
+
+            car.active_discount=car.discounts.filter(active=True).first()
 
         paginator=Paginator(qs,4)
 
@@ -229,27 +241,40 @@ class CarListView(View):
 
         page_object=paginator.get_page(page_number)
 
+        
+
+        all_title=Car.objects.values_list("title",flat=True).distinct()
+        all_category_objects=Car.objects.values_list("category_objects",flat=True).distinct()
+        all_brand_object=Car.objects.values_list("brand_object",flat=True).distinct()
+        all_body=Car.objects.values_list("body",flat=True).distinct()
+        all_condition=Car.objects.values_list("condition",flat=True).distinct()
+        all_fuel_type=Car.objects.values_list("fuel_type",flat=True).distinct()
+        all_color=Car.objects.values_list("color",flat=True).distinct()
+
+        all_records=[]
+
+        all_records.extend(all_title)
+        all_records.extend(all_category_objects)
+        all_records.extend(all_brand_object)
+        all_records.extend(all_body)
+        all_records.extend(all_condition)
+        all_records.extend(all_fuel_type)
+        all_records.extend(all_color)
+
+
         if search_text:
 
-            qs=qs.filter(
-                Q(title_icontains=search_text) |
-
-                Q(category_objects_icontains=search_text) |
-
-                Q(brand_object_icontains=search_text) |
-
-                Q(body_icontains=search_text) |
-
-                Q(condition_icontains=search_text) |
-
-                Q(fuel_type_icontains=search_text) |
-
-                Q(color_icontains=search_text) 
-            )
+            qs=qs.filter(Q(title__contains=search_text)
+                          |Q(category_objects__name__icontains=search_text) 
+                          |Q(brand_object__name__contains=search_text) 
+                          |Q(body__name__contains=search_text) 
+                          |Q(condition__contains=search_text) 
+                          |Q(fuel_type__contains=search_text) 
+                          |Q(color__contains=search_text))
 
 
         
-        return render(request,self.template_name,{"page_obj":page_object,"search":search_text})
+        return render(request,self.template_name,{"page_obj":page_object,"records":all_records})
     
 
     """
@@ -266,7 +291,7 @@ class CarListView(View):
 
 
 
-
+@method_decorator(decs,name="dispatch")
 class CarDetailView(View):
 
     template_name="car_detail.html"
@@ -280,13 +305,24 @@ class CarDetailView(View):
 
 
         return render(request,self.template_name,{"data":qs})
+
+@method_decorator(decs,name="dispatch")   
+class CarDeleteView(View):
+
+    def get(sef,request,*args,**kwargs):
+
+        id=kwargs.get("pk")
+
+        Car.objects.get(id=id).delete()
+
+        return redirect("car-list")
     
 #Booking view or booking confirm
 
 
 
 import razorpay
-
+@method_decorator(decs,name="dispatch")
 class CarBookingConfirmView(View):
 
     template_name="booking_confirm.html"
@@ -300,10 +336,12 @@ class CarBookingConfirmView(View):
         car=Car.objects.get(id=car_id)
 
         form_instance=self.form_class()
-       
-       
 
-        return render(request,self.template_name,{"form":form_instance,"car":car })
+        # get active discount
+
+        discount=car.discounts.filter(active=True).first()
+        
+        return render(request,self.template_name,{"form":form_instance,"car":car, "discount": discount})
     
     def post(self,request,*args,**kwargs):
 
@@ -315,9 +353,6 @@ class CarBookingConfirmView(View):
 
         car=Car.objects.get(id=car_id)
 
-        
-
-
         # check car is out of stock
 
         if car.stock_car <= 0:
@@ -326,59 +361,99 @@ class CarBookingConfirmView(View):
 
             return redirect("car-list")
 
-        
-
-       
-
-        
-
         if form_instance.is_valid():
+
+            
 
             from_date=form_instance.cleaned_data.get("from_date")
 
             to_date=form_instance.cleaned_data.get("to_date")
 
+            total_payment=form_instance.cleaned_data .get("total_payment") 
+
+            final_price=form_instance.cleaned_data .get("final_price")
+
+            discount_amount=form_instance.cleaned_data .get("discount_amount")
+
+
             payment_method=form_instance.cleaned_data.get("payment_method")
 
+            
             print(payment_method)
 
-            # Calculate the booking duration
-            duration = (to_date - from_date).days
+            # days duration between dates
+            duration_days=(to_date-from_date).days
 
-            # Calculate total payment based on duration
-            if duration <= 7:
-                total_payment = duration * car.price_per_day
-            elif duration <= 30:
-                total_payment = car.price_per_week
+            total_payment=0
+
+            # calculate total_payment based on duration
+
+            
+
+            if duration_days <=7:
+
+                total_payment=duration_days*car.price_per_day
+
+            elif duration_days == 30:
+
+                total_payment=car.price_per_month
+
+            elif duration_days <=30:
+
+                weeks=duration_days // 7
+
+                remaining_days=duration_days % 7
+
+                total_payment=(weeks*car.price_per_week)+(remaining_days*car.price_per_day)
+
+
             else:
-                total_payment = car.price_per_month
 
-            # Apply discount if available
-            discount_amount = (total_payment * car.disc_price) / 100 if car.disc_price else 0
-            final_price = total_payment - discount_amount
+                months=duration_days // 30
 
-            # Save the booking object (we can redirect later)
-            if "proceed_payment" in request.POST:
+                remaining_days=duration_days % 30
 
+                weeks=remaining_days // 7
 
-                booking=form_instance.save(commit=False)
+                days=remaining_days % 7
 
-                booking.customer=request.user
+                total_payment=(months*car.price_per_month)+(weeks*car.price_per_week)+(days*car.price_per_day)
 
-                booking.product_object=car
+            #apply active discount
 
-                booking.is_order_placed=True
-                booking.total_payment = final_price
-                    # booking.total_payment = total_payment
+            car_discount=car.discounts.filter(active=True).first()
 
-                booking.save()
+            discount_amount=0
 
-                    
+            if car_discount:
 
+                if car_discount.discount_type =="percentage":
 
-               
-            
-            
+                    discount_amount = (total_payment * car_discount.value)/100
+
+                elif car_discount.discount_type == "flat amount":
+
+                    discount_amount = car_discount.value
+
+            discounted_price = total_payment -discount_amount
+
+            final_price = discounted_price
+
+            booking=form_instance.save(commit=False)
+
+            booking.customer=request.user
+
+            booking.product_object=car
+
+            booking.total_payment = total_payment
+
+            booking.discount_amount = discount_amount
+
+            booking.final_price = final_price
+
+            booking.is_order_placed=True
+
+            booking.save()
 
             #show stock reduce
 
@@ -393,6 +468,7 @@ class CarBookingConfirmView(View):
                 # total_amount=(total_payment)*100
 
                 total_amount = int(final_price * 100)  # Convert to paisa
+                    
                 data = { "amount": total_amount, "currency": "INR", "receipt": "order_rcptid_11" }
 
                 payment = client.order.create(data=data)
@@ -404,62 +480,30 @@ class CarBookingConfirmView(View):
                 booking.save()
 
                 context={
-                        "amount":total_amount,
 
-                        "currency":"INR",
+                            "amount":total_amount,
 
-                        "key_id":RZP_KEY_ID,
+                            "currency":"INR",
 
-                        "order_id":rzp_order_id,
+                            "key_id":RZP_KEY_ID,
 
-                    }
-                
-                # return redirect("booking-summary")
-                
+                            "order_id":rzp_order_id,
 
+                            "total_payment":final_price,
 
+                            
+                        }
+                        
+
+                    
                 return render(request,"payment.html",context)
             
-            # messages.success(request, "Booking confirmed successfully!")
             return redirect("booking-summary")
         
-        messages.success(request, "Booking confirmed successfully!")
-        return render(request, "booking_summary.html", {
-                "booking": booking,
-                "total_payment": total_payment,
-                "discount_amount": discount_amount,
-                "final_price": final_price
-            })
 
-       
-
-        
-        
-
+# booking summary
             
-            
-        
-           
-
-       
-
-            
-
-            
-
-
-              
-                
-                # messages.success(request,"Booking confirmed Successfully!!")
-
-            # print(f"Total Payment: {total_payment}")
-                
-            
-           
-        
-        
-        
-
+@method_decorator(decs,name="dispatch")
 class BookingSummaryView(View):
 
     template_name="booking_summary.html"
@@ -470,9 +514,12 @@ class BookingSummaryView(View):
 
         qs=CarBooking.objects.filter(customer=request.user)
 
-        return render(request,self.template_name,{"bookings":qs})
+        return render(request,self.template_name,{"booking_item":qs})
+
 
 @method_decorator([csrf_exempt],name="dispatch")
+@method_decorator(decs,name="dispatch")
+
 class PaymentVerificationView(View):
 
     def post(self,request,*args,**kwargs):
@@ -502,4 +549,13 @@ class PaymentVerificationView(View):
         print(request.POST)
 
         return redirect("booking-summary")
-    
+
+
+@method_decorator(decs,name="dispatch")   
+class SignOutView(View):
+
+    def get(self,request,*args,**kwargs):
+
+        logout(request)
+
+        return redirect("signin")
